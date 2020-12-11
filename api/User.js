@@ -17,10 +17,11 @@ userAPI.post('/create-auth-token', async (req, res) => {
         res.status(200).send(token)
     } catch (err) {
         if (err.code === 'auth/user-not-found') {
-            const token = await firebase.auth().createUser({
+            const firebaseUser = await firebase.auth().createUser({
                 uid: user_id,
                 gid: group_id
             })
+            const token = await firebase.auth().createCustomToken(firebaseUser.uid)
             res.status(200).send(token)
         }
         console.error(err)

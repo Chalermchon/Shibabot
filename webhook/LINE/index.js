@@ -40,7 +40,6 @@ lineWebhook.post('/', async (req, res) => {
                     await userCol.doc(userId).update({
                         isFriend: false
                     })
-                    await unsetRichmenuFor(userId)
                     return res.status(200).json({status: 'success'})
                 case 'join':
                     if (roomId) {

@@ -98,5 +98,5 @@ export const replyFlexWhenJoinGroup = async (groupId, replyToken) => {
                 }
             }
         }]
-    })
+    }, { headers: LINE_HEADERS })
 }

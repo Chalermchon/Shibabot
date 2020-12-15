@@ -1,11 +1,33 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import { Provider } from 'react-redux';
+import ReactDOM from 'react-dom'
+import { BrowserRouter } from 'react-router-dom'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
+import App from './App'
+import reportWebVitals from './reportWebVitals'
+import theme from './theme'
+import rootReducer from './reducers'
+
+const GlobalStyled = createGlobalStyle`
+  * {
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@100;200;400;500&display=swap');
+    font-family: 'Kanit';
+  }
+`
+const store = createStore(rootReducer, applyMiddleware(thunk))
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store} >
+      <BrowserRouter>
+        <ThemeProvider theme={theme} >
+          <GlobalStyled />
+          <App />
+        </ThemeProvider>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

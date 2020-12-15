@@ -15,6 +15,7 @@ lineWebhook.post('/line', async (req, res) => {
                 case 'follow':
                     const user = await userCol.doc(userId).get()
                     if (user.exists && user.data().groupId) {
+                        console.log('FOLLOW:: user exists')
                         await userCol.doc(userId).update({
                             isFriend: true
                         })

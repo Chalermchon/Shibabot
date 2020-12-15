@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "author": "Chalermchon Onbua",
-  "license": "MIT",
   "scripts": {
     "start:dev": "nodemon -r esm index.js",
     "start": "node -r esm index.js",

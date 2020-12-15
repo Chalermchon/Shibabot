@@ -1,10 +1,14 @@
 import morgan from 'morgan'
 import chalk from 'chalk'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 import 'dayjs/locale/th'
 
 morgan.token('date', (req, res) => {
-    return dayjs().locale('th').format(' DD/MMM/YYYY HH:mm:ss:SSS ')
+    return dayjs().tz('Asia/Bangkok').locale('th').format(' DD/MMM/YYYY HH:mm:ss:SSS ')
 })
 
 export default morgan(function (tokens, req, res) {

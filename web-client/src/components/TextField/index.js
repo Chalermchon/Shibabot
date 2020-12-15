@@ -12,7 +12,6 @@ const TextField = ({
         <TextFieldRoot width={width} fullWidth={fullWidth} >
             <Label focus={focus} notEmpty={notEmpty} >{label}</Label>
             <Input
-                inputMode='numeric'
                 onFocus={() => setFocus(true)} onBlur={()=>setFocus(false)}
                 value={value} onChange={(e) => {
                     if (handleChange)
@@ -29,6 +28,9 @@ export default TextField
 const TextFieldRoot = styled.div`
     width: ${props => props.fullWidth ? '-webkit-fill-available' : props.width+'px'};
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin: 10px;
 `
 const Input = styled.input`
@@ -49,7 +51,7 @@ const Input = styled.input`
 const Label = styled.label`
     pointer-events: none;
     position: absolute;
-    top: ${props => props.focus || props.notEmpty ? -10 : 16 }px;
+    top: ${props => props.focus || props.notEmpty ? '-10px' : 'auto' };
     margin: 0 10px; padding: 0 5px;
     background-color: white;
     color: ${props => props.focus ? 'royalblue' : '#717171'};

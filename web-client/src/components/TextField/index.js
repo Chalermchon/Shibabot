@@ -53,5 +53,6 @@ const Label = styled.label`
     background-color: white;
     color: ${props => props.focus ? 'royalblue' : '#717171'};
     font-size: ${props => props.focus || props.notEmpty ? 14 : 18 }px;
+    font-family: 'Kanit';
     transition: all 0.25s;
 `

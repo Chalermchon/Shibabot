@@ -103,7 +103,11 @@ lineWebhook.post('/', async (req, res) => {
         }
         return res.status(406).json({status: 'error', error: 'Not Acceptable'})
     } catch (e) {
-        console.error(e)
+        if (e.host === 'api.line.me') {
+            console.error(JSON.stringify(e.response.data))
+        } else {
+            console.error(e)
+        }
         return res.status(500).send({status: 'error', error: 'Internal Server Error'})
     }
 })

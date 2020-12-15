@@ -5,7 +5,7 @@ import { pushText, setRichmenuFor } from '../webhook/LINE/functions'
 
 const userAPI = Router()
 
-userAPI.post('/create-auth-token', async (req, res) => {
+userAPI.post('/generate-auth-token', async (req, res) => {
     const { access_token, user_id, group_id } = req.body
     try {
         if ( typeof access_token === 'undefined') {
@@ -34,26 +34,26 @@ userAPI.post('/create-auth-token', async (req, res) => {
 
 userAPI.post('/register', async (req, res) => {
     try {
-        const { userId, groupId, localLocation } = req.body;
-        const group = await groupCol.doc(groupId).get()
+        const { user_id, group_id, local_location } = req.body;
+        const group = await groupCol.doc(group_id).get()
         if (group.exists) {
-            const user = await userCol.doc(userId).get()    
+            const user = await userCol.doc(user_id).get()    
             if (!user.exists || !user.data().groupId) {
                 if (user.exists) {
-                    await userCol.doc(userId).update({ 
-                        groupId: groupId,
-                        localLocation: localLocation
+                    await userCol.doc(user_id).update({ 
+                        groupId: group_id,
+                        localLocation: local_location
                     })
-                    await setRichmenuFor(userId)
-                    await pushText(userId, [
+                    await setRichmenuFor(user_id)
+                    await pushText(user_id, [
                         'มาเรื่มใช้งานกันเลยนะครับ',
                         'คุณสามารถเข้าไป "เลือกซื้อสินค้า" หรือจะลงขายสินต้าได้ใน "ร้านค้าของฉัน" ในเมนูหลักได้เลยยย'
                     ])
                 } else {
                     console.log('API:: user not exists')
-                    await userCol.doc(userId).set({ 
-                        groupId: groupId,
-                        localLocation: localLocation
+                    await userCol.doc(user_id).set({ 
+                        groupId: group_id,
+                        localLocation: local_location
                     })
                 }
                 res.status(201).send();

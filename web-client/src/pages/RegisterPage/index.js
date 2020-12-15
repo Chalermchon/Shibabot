@@ -24,7 +24,11 @@ const RegisterPage = ({ match }) => {
     }
     const handleSubmit = (e) => {
         setLoading(true)
-        axios.post('/api/user/register', { userId, groupId, localLocation })
+        axios.post('/api/user/register', {
+            user_id: userId,
+            group_id: groupId,
+            local_location: localLocation 
+        })
             .then(() => {
                 liff.openWindow({ url: 'https://line.me/R/ti/p/@610npkuz' })
                 liff.closeWindow()

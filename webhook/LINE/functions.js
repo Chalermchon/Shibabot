@@ -44,7 +44,7 @@ export const replyFlexWhenJoinGroup = async (groupId, replyToken) => {
                         size: "xl",
                         color: "#676767FF",
                         align: "center",
-                        gravity: "center",
+                        gravity: "center"
                     }
                 ]
             },
@@ -59,7 +59,7 @@ export const replyFlexWhenJoinGroup = async (groupId, replyToken) => {
                         size: "lg",
                         align: "center",
                         margin: "xs",
-                        offsetBottom: "10px",
+                        offsetBottom: "10px"
                     },
                     {
                         type: "text",
@@ -68,7 +68,7 @@ export const replyFlexWhenJoinGroup = async (groupId, replyToken) => {
                         size: "md",
                         align: "start",
                         gravity: "top",
-                        wrap: true,
+                        wrap: true
                     }
                 ]
             },

@@ -25,7 +25,7 @@ export const setRichmenuFor = (userId) => {
     return axios.post(`https://api.line.me/v2/bot/user/${userId}/richmenu/richmenu-${RICHMENU_ID}`, {}, { headers: LINE_HEADERS })
 }
 export const unsetRichmenuFor = (userId) => {
-    return axios.delete(`https://api.line.me/v2/bot/user/${userId}/richmenu/richmenu-${RICHMENU_ID}`, {}, { headers: LINE_HEADERS })
+    return axios.delete(`https://api.line.me/v2/bot/user/${userId}/richmenu`, {}, { headers: LINE_HEADERS })
 }
 export const replyFlexWhenJoinGroup = async (groupId, replyToken) => {
     return axios.post(`${LINE_MESSAGING_API}/reply`, {

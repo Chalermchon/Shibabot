@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import axios from 'axios'
 import liff from '@line/liff'
 import styled from 'styled-components'
-import { userCol } from '../../firebase-web'
+import { groupCol, userCol } from '../../firebase-web'
 import { TextField, Loader } from '../../components'
 
 const RegisterPage = ({ match }) => {
@@ -13,11 +13,16 @@ const RegisterPage = ({ match }) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-    }, [])
-
-    useEffect(() => {
         if (userId) {
-            userCol.doc(userId).get()
+            if (groupId)
+            groupCol.doc(groupId).get()
+                .then( group => {
+                    return (
+                        group.exists
+                        ?   userCol.doc(userId).get()
+                        :   new Promise((resolve, reject) => reject('group-not-found'))
+                    )
+                })
                 .then(user => {
                     if (user.exists && user.data().groupId) {
                         liff.openWindow({ url: 'https://line.me/R/ti/p/@610npkuz' })
@@ -27,10 +32,15 @@ const RegisterPage = ({ match }) => {
                     }
                 })
                 .catch(err => {
-                    console.error(err)
+                    if (err === 'group-not-found') {
+                        liff.closeWindow()
+                    } else {
+                        console.error(err)
+                    }
                 })
+            
         }
-    }, [userId])
+    }, [groupId, userId])
 
     const handleChange = (e) => {
         if(!e.target.value.match(/[^\d/]/)) {

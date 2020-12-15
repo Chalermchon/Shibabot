@@ -35,15 +35,13 @@ lineWebhook.post('/', async (req, res) => {
                             'และถ้าผมอยู่ในกลุ่มแล้วรบกวนช่วยกดปุ่ม "ลงทะเบียน" ให้ด้วยนะครับ',
                         ])
                     }
-                    res.status(200).send('OK')
-                    break
+                    return res.status(200).json({status: 'success'})
                 case 'unfollow':
                     await userCol.doc(userId).update({
                         isFriend: false
                     })
                     await unsetRichmenuFor(userId)
-                    res.status(200).send('OK')
-                    break
+                    return res.status(200).json({status: 'success'})
                 case 'join':
                     if (roomId) {
                         await replyText(replyToken, 'ขอโทษด้วยนะครับ แต่ผมยังไม่รองรับการใช้งานในรูปแบบห้องนะครับ')
@@ -51,8 +49,7 @@ lineWebhook.post('/', async (req, res) => {
                         await groupCol.doc(groupId).set({})
                         await replyFlexWhenJoinGroup(groupId, replyToken)
                     }
-                    res.status(200).send('OK')
-                    break
+                    return res.status(200).json({status: 'success'})
                 case 'leave':
                     if (groupId) {
                         const users = await userCol.where('groupId', '==', groupId).get()
@@ -68,8 +65,7 @@ lineWebhook.post('/', async (req, res) => {
                         }
                         await groupCol.doc(groupId).delete()
                     }
-                    res.status(200).send('OK')
-                    break
+                    return res.status(200).json({status: 'success'})
                 case 'memberJoined':
                     if (groupId) {
                         const members = event.joined.members
@@ -81,8 +77,7 @@ lineWebhook.post('/', async (req, res) => {
                             })
                         }
                     }
-                    res.status(200).send('OK')
-                    break
+                    return res.status(200).json({status: 'success'})
                 case 'memberLeft':
                     if (groupId) {
                         const members = event.left.members
@@ -97,22 +92,20 @@ lineWebhook.post('/', async (req, res) => {
                             await unsetRichmenuFor(userId)
                         }
                     }
-                    res.status(200).send('OK')
-                    break
+                    return res.status(200).json({status: 'success'})
                 case 'message':
                     if (source.type === 'user') {
                         await replyText(replyToken, 'ขอโทษด้วยนะครับ แต่ผมยังไม่รองรับโต้ตอบข้อความนะครับ')
                     }
-                    res.status(200).send('OK')
-                    break
+                    return res.status(200).json({status: 'success'})
                 default:
-                    res.status(200).send('OK')
-                    break
+                    return res.status(200).json({status: 'success'})
             }
         }
-        res.status(406).send('Not Acceptable')
+        return res.status(406).json({status: 'error', error: 'Not Acceptable'})
     } catch (e) {
-        res.status(500).send('Internal Server Error')
+        console.error(e)
+        return res.status(500).send({status: 'error', error: 'Internal Server Error'})
     }
 })
 

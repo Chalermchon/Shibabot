@@ -26,7 +26,7 @@ const RegisterPage = ({ match }) => {
                     })
                 })
                 .then(user => {
-                    if (user.exists && user.data().groupId) {
+                    if (user.exists && user.data().groupId && user.data().groupId === groupId) {
                         liff.openWindow({ url: 'https://line.me/R/ti/p/@610npkuz' })
                         liff.closeWindow()
                     } else {
@@ -35,8 +35,8 @@ const RegisterPage = ({ match }) => {
                 })
                 .catch(err => {
                     if (err === 'group-not-found') {
-                        console.log('group-not-found')
-                        liff.closeWindow()
+                        alert('ไม่พบกลุ่มของคุณ กรุณาชวนน้องบอทเข้ากลุ่มก่อนใช้งานนะคะ')
+                        window.close()
                     } else {
                         console.error(err)
                     }

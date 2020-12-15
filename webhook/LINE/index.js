@@ -4,7 +4,7 @@ import { userCol, groupCol, FieldValue } from '../../firebase-admin'
 
 const lineWebhook = Router()
 
-lineWebhook.post('/line', async (req, res) => {
+lineWebhook.post('/', async (req, res) => {
     const [event] = req.body.events
     const { type, source, replyToken } = event
     const { userId, groupId, roomId } = source

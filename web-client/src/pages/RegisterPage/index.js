@@ -17,11 +17,13 @@ const RegisterPage = ({ match }) => {
             if (groupId)
             groupCol.doc(groupId).get()
                 .then( group => {
-                    return (
-                        group.exists
-                        ?   userCol.doc(userId).get()
-                        :   new Promise((resolve, reject) => reject('group-not-found'))
-                    )
+                    return new Promise((resolve, reject) => {
+                        if (group.exists) {
+                            resolve(userCol.doc(userId).get())
+                        } else {
+                            reject('group-not-found')
+                        }
+                    })
                 })
                 .then(user => {
                     if (user.exists && user.data().groupId) {
@@ -33,6 +35,7 @@ const RegisterPage = ({ match }) => {
                 })
                 .catch(err => {
                     if (err === 'group-not-found') {
+                        console.log('group-not-found')
                         liff.closeWindow()
                     } else {
                         console.error(err)

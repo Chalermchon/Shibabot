@@ -95,9 +95,8 @@ export const replyFlexWhenJoinGroup = async (groupId, replyToken) => {
                 },
                 styles: {
                     body: {
-                        backgroundColor: "#FFFFFFFF",
                         separator: true,
-                        separatorColor: "#7E7E7EFF"
+                        separatorColor: "#B2B2B2FF"
                     }
                 }
             }

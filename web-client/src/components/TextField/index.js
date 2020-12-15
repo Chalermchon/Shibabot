@@ -12,6 +12,7 @@ const TextField = ({
         <TextFieldRoot width={width} fullWidth={fullWidth} >
             <Label focus={focus} notEmpty={notEmpty} >{label}</Label>
             <Input
+                inputMode='numeric'
                 onFocus={() => setFocus(true)} onBlur={()=>setFocus(false)}
                 value={value} onChange={(e) => {
                     if (handleChange)
@@ -48,11 +49,10 @@ const Input = styled.input`
 const Label = styled.label`
     pointer-events: none;
     position: absolute;
-    top: ${props => props.focus || props.notEmpty ? -10 : 15 }px;
+    top: ${props => props.focus || props.notEmpty ? -10 : 16 }px;
     margin: 0 10px; padding: 0 5px;
     background-color: white;
     color: ${props => props.focus ? 'royalblue' : '#717171'};
     font-size: ${props => props.focus || props.notEmpty ? 14 : 18 }px;
-    font-family: 'Kanit';
     transition: all 0.25s;
 `

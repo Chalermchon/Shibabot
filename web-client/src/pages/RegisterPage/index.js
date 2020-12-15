@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useAlert } from "react-alert";
+import { useNotifications } from 'reapop'
 import axios from 'axios'
 import liff from '@line/liff'
 import styled from 'styled-components'
@@ -8,7 +8,7 @@ import { groupCol, userCol } from '../../firebase-web'
 import { TextField, Loader } from '../../components'
 
 const RegisterPage = ({ match }) => {
-    const alert = useAlert()
+    const { notify } = useNotifications()
     const { groupId } = match.params
     const { userId } = useSelector(state => state.user)
     const [localLocation, setLocalLocation] = useState('')
@@ -37,10 +37,20 @@ const RegisterPage = ({ match }) => {
                 })
                 .catch(err => {
                     if (err === 'group-not-found') {
-                        alert.show('กรุณาชวนน้องบอทเข้ากลุ่มก่อนใช้งานนะคะ', {
-                            title: 'ไม่พบกลุ่มของคุณ',
-                            closeCopy: 'เข้าใจแล้ว',
-                            onclose: () => liff.closeWindow()
+                        notify({
+                            status: 'error',
+                            title: 'ไม่พบกลุ่ม',
+                            message: 'กรุณาชวนน้องบอทเข้ากลุ่มก่อนใช้งานนะคะ',
+                            position: 'top-center',
+                            dismissAfter: 0, 
+                            buttons: [{
+                                name: 'OK',
+                                primary: true,
+                                onClick: () => {
+                                    setLoading(false)
+                                    liff.closeWindow()
+                                }
+                            }],
                         })
                     } else {
                         console.error(err)

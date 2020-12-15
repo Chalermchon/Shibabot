@@ -5,8 +5,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
-import { positions, Provider as AlertProvider } from "react-alert";
-import AlertMUITemplate from "react-alert-template-mui";
+import { NotificationsProvider } from 'reapop'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import theme from './theme'
@@ -17,9 +16,6 @@ const GlobalStyled = createGlobalStyle`
     font-family: 'Kanit';
   }
 `
-const options = {
-  position: positions.MIDDLE
-}
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
@@ -28,10 +24,10 @@ ReactDOM.render(
     <ReduxProvider store={store} >
       <BrowserRouter>
         <ThemeProvider theme={theme} >
-          <AlertProvider template={AlertMUITemplate} {...options}>
+          <NotificationsProvider >
             <GlobalStyled />
             <App />
-          </AlertProvider>
+          </NotificationsProvider>
         </ThemeProvider>
       </BrowserRouter>
     </ReduxProvider>

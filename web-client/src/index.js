@@ -1,10 +1,12 @@
 import React from 'react'
 import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
-import { Provider } from 'react-redux';
+import { Provider as ReduxProvider } from 'react-redux';
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
+import { positions, Provider as AlertProvider } from "react-alert";
+import AlertMUITemplate from "react-alert-template-mui";
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import theme from './theme'
@@ -15,18 +17,24 @@ const GlobalStyled = createGlobalStyle`
     font-family: 'Kanit';
   }
 `
+const options = {
+  position: positions.MIDDLE
+}
+
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store} >
+    <ReduxProvider store={store} >
       <BrowserRouter>
         <ThemeProvider theme={theme} >
-          <GlobalStyled />
-          <App />
+          <AlertProvider template={AlertMUITemplate} {...options}>
+            <GlobalStyled />
+            <App />
+          </AlertProvider>
         </ThemeProvider>
       </BrowserRouter>
-    </Provider>
+    </ReduxProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

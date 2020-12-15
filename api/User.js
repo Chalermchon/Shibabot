@@ -1,6 +1,5 @@
 import { Router } from 'express'
-import {} from '../firebase-admin'
-import { groupCol, userCol } from '../web-client/src/firebase-web'
+import { groupCol, userCol } from '../firebase-admin'
 import { pushText, setRichmenuFor } from '../webhook/LINE/functions'
 
 const userAPI = Router()

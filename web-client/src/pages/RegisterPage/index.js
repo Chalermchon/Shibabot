@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import axios from 'axios'
 import liff from '@line/liff'
 import styled from 'styled-components'
+import { userCol } from '../../firebase-web'
 import { TextField, Loader } from '../../components'
 
 const RegisterPage = ({ match }) => {
@@ -12,8 +13,22 @@ const RegisterPage = ({ match }) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+    }, [])
+
+    useEffect(() => {
         if (userId) {
-            setLoading(false)
+            userCol.doc(userId).get()
+                .then(user => {
+                    if (user.exists && user.data().groupId) {
+                        liff.openWindow({ url: 'https://line.me/R/ti/p/@610npkuz' })
+                        liff.closeWindow()
+                    } else {
+                        setLoading(false)
+                    }
+                })
+                .catch(err => {
+                    console.error(err)
+                })
         }
     }, [userId])
 

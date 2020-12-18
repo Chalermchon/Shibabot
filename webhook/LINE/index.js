@@ -15,7 +15,6 @@ lineWebhook.post('/', async (req, res) => {
                 case 'follow':
                     const user = await userCol.doc(userId).get()
                     if (user.exists && user.data().groupId) {
-                        console.log('FOLLOW:: user exists')
                         await userCol.doc(userId).update({
                             isFriend: true
                         })
@@ -60,7 +59,7 @@ lineWebhook.post('/', async (req, res) => {
                                 products: FieldValue.delete(),
                                 orders: FieldValue.delete()
                             })
-                            await unsetRichmenuFor(user.id)
+                            await unsetRichmenuFor(user.id) 
                         }
                         await groupCol.doc(groupId).delete()
                     }

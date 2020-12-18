@@ -12,5 +12,6 @@ firebase.initializeApp({
 })
 
 const firestore = firebase.firestore()
+export const auth = firebase.auth()
 export const userCol = firestore.collection('Users')
 export const groupCol = firestore.collection('Groups')

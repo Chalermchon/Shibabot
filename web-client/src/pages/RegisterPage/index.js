@@ -1,62 +1,67 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useNotifications } from 'reapop'
+import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import liff from '@line/liff'
 import styled from 'styled-components'
-import { groupCol, userCol } from '../../firebase-web'
-import { TextField, Loader } from '../../components'
+import { useToasts } from 'react-toast-notifications'
+import { TextField } from '../../components'
 
-const RegisterPage = ({ match }) => {
-    const { notify } = useNotifications()
-    const { groupId } = match.params
+const RegisterPage = ({ location }) => {
+    const dispatch = useDispatch()
+    const { addToast } = useToasts()
+    const { gid: groupId } = Object.fromEntries(new URLSearchParams(location.search))
     const { userId } = useSelector(state => state.user)
     const [localLocation, setLocalLocation] = useState('')
-    const [loading, setLoading] = useState(true)
+
+    const redirectToAddFriend = () => {
+        if (liff.isInClient()) {
+            liff.openWindow({ url: 'https://line.me/R/ti/p/@610npkuz' })
+            liff.closeWindow()
+        } else {
+            window.location = 'https://line.me/R/ti/p/@610npkuz'
+        }
+    }
 
     useEffect(() => {
-        if (userId) {
-            if (groupId)
-            groupCol.doc(groupId).get()
-                .then( group => {
+        if (userId && groupId) {
+            axios.get(`/api/group/${groupId}`)
+                .then( ({data: group}) => {
                     return new Promise((resolve, reject) => {
                         if (group.exists) {
-                            resolve(userCol.doc(userId).get())
+                            resolve(axios.get(`/api/user/${userId}`))
                         } else {
                             reject('group-not-found')
                         }
                     })
                 })
-                .then(user => {
-                    if (user.exists && user.data().groupId && user.data().groupId === groupId) {
-                        liff.openWindow({ url: 'https://line.me/R/ti/p/@610npkuz' })
-                        liff.closeWindow()
+                .then( ({data: user}) => {
+                    if (user.exists && user.gid === groupId) {
+                        redirectToAddFriend()  
                     } else {
-                        setLoading(false)
+                        if (user.gid !== groupId) {
+                            addToast('ถ้าคุณลงทะเบียนกับกลุ่มนี้ ข้อมูลในกลุ่มเก่าของคุณจะถูกลบทั้งหมด', {
+                                appearance: 'warning'
+                            })
+                        }
+                        dispatch({ type: 'SET_LOADER', payload: { loading: false, animate: false } })
                     }
                 })
                 .catch(err => {
                     if (err === 'group-not-found') {
-                        notify({
-                            status: 'error',
+                        dispatch({ type: 'SET_ERROR', payload: {
+                            isError: true,
                             title: 'ไม่พบกลุ่ม',
-                            message: 'กรุณาชวนน้องบอทเข้ากลุ่มก่อนใช้งานนะคะ',
-                            position: 'top-center',
-                            dismissAfter: 0, 
-                            buttons: [{
-                                name: 'OK',
-                                primary: true,
-                                onClick: () => {
-                                    setLoading(false)
-                                    liff.closeWindow()
-                                }
-                            }],
-                        })
+                            description: 'กรุณาชวนบอทเข้ากลุ่มก่อนนะคะ'
+                        }})
                     } else {
-                        console.error(err)
+                        dispatch({ type: 'SET_ERROR', payload: {
+                            isError: true,
+                            title: 'พบข้อผิดพลาดบางอย่าง',
+                            description: 'กรุณาลองใหม่ในภายหลัง'
+                        }})
+                        console.log(err)
                     }
                 })
-            
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [groupId, userId])
@@ -67,41 +72,39 @@ const RegisterPage = ({ match }) => {
         }
     }
     const handleSubmit = (e) => {
-        setLoading(true)
+        dispatch({ type: 'SET_LOADER', payload: { loading: true, animate: true } })
         axios.post('/api/user/register', {
             user_id: userId,
             group_id: groupId,
             local_location: localLocation 
         })
             .then(() => {
-                liff.openWindow({ url: 'https://line.me/R/ti/p/@610npkuz' })
-                liff.closeWindow()
+                redirectToAddFriend()
             })
             .catch((err) => {
+                dispatch({ type: 'SET_ERROR', payload: {
+                    isError: true,
+                    title: 'พบข้อผิดพลาดบางอย่าง',
+                    description: 'กรุณาลองใหม่ในภายหลัง'
+                }})
                 console.error(err)
             })
     }
 
     return (
         <Root>
-            {
-                !loading
-                ?   <>
-                        <Caption>กรุณากรอกที่อยู่ของคุณ</Caption>
-                        <TextField
-                            label="บ้านเลขที่"
-                            value={localLocation}                
-                            handleChange={handleChange}
-                        />
-                        <Button 
-                            onClick={handleSubmit} 
-                            disabled={!localLocation.match(/^\d*(\d|\/\d+)$/)} 
-                        >
-                            ยืนยัน
-                        </Button>
-                    </>
-                :   <Loader />      
-            }
+            <Caption>กรุณากรอกที่อยู่ของคุณ</Caption>
+            <TextField
+                label="บ้านเลขที่"
+                value={localLocation}                
+                handleChange={handleChange}
+            />
+            <Button 
+                onClick={handleSubmit} 
+                disabled={!localLocation.match(/^\d*(\d|\/\d+)$/)} 
+            >
+                ยืนยัน
+            </Button>
         </Root>
     )
 }

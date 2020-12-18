@@ -1,11 +1,18 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import styled, {keyframes} from 'styled-components'
 
-const Loader = ({ animate=true }) => {
+const Loader = () => {
+    const { loader: {loading, animate} } = useSelector(state => state.ui)
+
     return ( 
-        <Root animate={animate}>
-            <Ring />
-        </Root>
+        loading
+        ?   <Root>
+                <Background animate={animate} >
+                    <Ring />
+                </Background>
+            </Root>
+        :   null
     )
 }
 
@@ -34,12 +41,21 @@ const scale = keyframes`
 const Root = styled.div`
     width: -webkit-fill-available; height: -webkit-fill-available;
     position: fixed;
+    z-index: 99;
     display: flex; 
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: transparent;
+`
+const Background = styled.div`
+    width: 100%; height: 100%;
+    display: flex; 
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
     background-color: white;
-    animation: ${scale} 0.5s ease-in-out ${props => props.animate ? 1 : 0};
+    animation: ${scale} 0.5s ease-in-out ${({ animate }) => animate ? 1 : 0};
 `
 const Ring = styled.div`
     width: 64px; height: 64px;

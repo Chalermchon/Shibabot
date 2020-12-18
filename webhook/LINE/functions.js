@@ -84,7 +84,7 @@ export const replyFlexWhenJoinGroup = async (groupId, replyToken) => {
                             action: {
                                 type: "uri",
                                 label: "ลงทะเบียน",
-                                uri: `https://line.me/R/app/${LIFF_ID}?liff.state=%2Fregister%2F${groupId}`
+                                uri: `https://line.me/R/app/${LIFF_ID}?liff.state=%2Fregister%3Fgid%3D${groupId}`
                             },
                             color: "#2460C8FF",
                             margin: "none",

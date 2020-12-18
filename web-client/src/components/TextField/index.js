@@ -28,6 +28,7 @@ export default TextField
 const TextFieldRoot = styled.div`
     width: ${props => props.fullWidth ? '-webkit-fill-available' : props.width+'px'};
     position: relative;
+    /* z-index: -1; */
     display: flex;
     flex-direction: column;
     justify-content: center;

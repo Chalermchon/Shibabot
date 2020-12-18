@@ -6,6 +6,7 @@ const firebase = admin.initializeApp({
     databaseURL: "https://shibabot-d4ce2.firebaseio.com",
 })
 const firestore = firebase.firestore()
+export const auth = firebase.auth()
 export const FieldValue = admin.firestore.FieldValue
 export const userCol = firestore.collection('Users')
 export const groupCol = firestore.collection('Groups')

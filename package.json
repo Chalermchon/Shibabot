@@ -4,11 +4,14 @@
   "main": "index.js",
   "author": "Chalermchon Onbua",
   "scripts": {
-    "start:dev": "nodemon -r esm index.js",
+    "dev": "nodemon --ignore web-client/build/ --exec 'yarn build:dev && yarn start:dev'",
+    "build:dev": "cd web-client && yarn build",
+    "start:dev": "node -r dotenv/config -r esm index.js",
     "start": "node -r esm index.js",
-    "heroku-postbuild": "cd web-client && yarn install && yarn run build"
+    "heroku-postbuild": "cd web-client && yarn install && yarn build"
   },
   "dependencies": {
+    "@types/react-router-dom": "^5.1.6",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "cors": "^2.8.5",
@@ -18,13 +21,15 @@
     "express": "^4.17.1",
     "firebase-admin": "^9.4.1",
     "morgan": "^1.10.0",
-    "path": "^0.12.7"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.6"
+    "path": "^0.12.7",
+    "react-toast-notifications": "^2.4.0"
   },
   "engines": {
     "node": "14.10",
     "yarn": "1.22"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.6"
   }
 }

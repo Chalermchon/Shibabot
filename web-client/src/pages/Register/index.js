@@ -1,26 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
-import liff from '@line/liff'
 import styled from 'styled-components'
-import { useToasts } from 'react-toast-notifications'
 import { TextField } from '../../components'
+import { redirectToAddFriendOrLineChat } from '../../actions'
 
-const RegisterPage = ({ location }) => {
+const Register = ({ location }) => {
     const dispatch = useDispatch()
-    const { addToast } = useToasts()
     const { gid: groupId } = Object.fromEntries(new URLSearchParams(location.search))
     const { userId } = useSelector(state => state.user)
     const [localLocation, setLocalLocation] = useState('')
-
-    const redirectToAddFriend = () => {
-        if (liff.isInClient()) {
-            liff.openWindow({ url: 'https://line.me/R/ti/p/@610npkuz' })
-            liff.closeWindow()
-        } else {
-            window.location = 'https://line.me/R/ti/p/@610npkuz'
-        }
-    }
 
     useEffect(() => {
         if (userId && groupId) {
@@ -36,30 +25,35 @@ const RegisterPage = ({ location }) => {
                 })
                 .then( ({data: user}) => {
                     if (user.exists && user.gid === groupId) {
-                        redirectToAddFriend()  
+                        redirectToAddFriendOrLineChat()
                     } else {
-                        if (user.gid !== groupId) {
-                            addToast('ถ้าคุณลงทะเบียนกับกลุ่มนี้ ข้อมูลในกลุ่มเก่าของคุณจะถูกลบทั้งหมด', {
-                                appearance: 'warning'
-                            })
+                        if (user.gid && user.gid !== groupId) {
+                            dispatch({ type: 'SET_ALERT', payload: {
+                                isDisplay: true,
+                                type: 'warning',
+                                title: 'คุณเคยลงทะเบียนไว้แล้ว',
+                                description: 'ถ้าคุณลงทะเบียนกับกลุ่มนี้ ข้อมูลในกลุ่มเก่าของคุณจะถูกลบทั้งหมด',
+                                button: {
+                                    display: true,
+                                    onClick: (e) => {
+                                        dispatch({ type: 'SET_ALERT', payload: {isDisplay: false} })
+                                    }
+                                }
+                            } })
                         }
-                        dispatch({ type: 'SET_LOADER', payload: { loading: false, animate: false } })
+                        dispatch({ type: 'SET_LOADER', payload: false })
                     }
                 })
                 .catch(err => {
                     if (err === 'group-not-found') {
                         dispatch({ type: 'SET_ERROR', payload: {
-                            isError: true,
+                            isDisplay: true,
                             title: 'ไม่พบกลุ่ม',
                             description: 'กรุณาชวนบอทเข้ากลุ่มก่อนนะคะ'
                         }})
                     } else {
-                        dispatch({ type: 'SET_ERROR', payload: {
-                            isError: true,
-                            title: 'พบข้อผิดพลาดบางอย่าง',
-                            description: 'กรุณาลองใหม่ในภายหลัง'
-                        }})
-                        console.log(err)
+                        console.log('ERROR krubbb: ', err)
+                        dispatch({ type: 'SET_ERROR', payload: true })
                     }
                 })
         }
@@ -72,6 +66,7 @@ const RegisterPage = ({ location }) => {
         }
     }
     const handleSubmit = (e) => {
+        e.preventDefault()
         dispatch({ type: 'SET_LOADER', payload: { loading: true, animate: true } })
         axios.post('/api/user/register', {
             user_id: userId,
@@ -79,11 +74,11 @@ const RegisterPage = ({ location }) => {
             local_location: localLocation 
         })
             .then(() => {
-                redirectToAddFriend()
+                redirectToAddFriendOrLineChat()
             })
             .catch((err) => {
                 dispatch({ type: 'SET_ERROR', payload: {
-                    isError: true,
+                    isDisplay: true,
                     title: 'พบข้อผิดพลาดบางอย่าง',
                     description: 'กรุณาลองใหม่ในภายหลัง'
                 }})
@@ -109,9 +104,9 @@ const RegisterPage = ({ location }) => {
     )
 }
 
-export default RegisterPage
+export default Register
 
-const Root = styled.div`
+const Root = styled.form`
     height: ${window.innerHeight}px;
     display: flex;
     flex-direction: column;

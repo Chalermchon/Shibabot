@@ -5,12 +5,11 @@ import { BrowserRouter } from 'react-router-dom'
 import { createStore, applyMiddleware } from 'redux'
 import { Provider as ReduxProvider } from 'react-redux'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
-import { ToastProvider } from 'react-toast-notifications'
 import App from './App'
 import theme from './theme'
 import rootReducer from './reducers'
 import reportWebVitals from './reportWebVitals'
-import { ErrorDisplay, Loader } from './components'
+import { Alert, Loader } from './components'
 
 const GlobalStyled = createGlobalStyle`
   * {
@@ -25,12 +24,10 @@ ReactDOM.render(
     <ReduxProvider store={store} >
       <BrowserRouter>
         <ThemeProvider theme={theme} >
-          <ToastProvider>
             <GlobalStyled />
             <Loader />
-            <ErrorDisplay />
+            <Alert />
             <App />
-          </ToastProvider>
         </ThemeProvider>
       </BrowserRouter>
     </ReduxProvider>

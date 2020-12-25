@@ -1,4 +1,6 @@
 const initialState = {
+    isSignIn: false,
+    notRegister: false,
     userId: '',
     groupId: '',
     name: '',

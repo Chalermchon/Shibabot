@@ -1,36 +1,37 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-const TextField = ({
+const TextArea = ({
     fullWidth = false, width = 340, disabled = false,
     label, name, value, handleChange, 
-    inputMode='text', ignoreReg=/\*/
 }) => {
+    const minRows = 3
+    const [rows, setRows] = useState(minRows)
     const [focus, setFocus] = useState(false)
     const [notEmpty, setNotEmpty] = useState(value !== '')
 
     return (
-        <TextFieldRoot width={width} fullWidth={fullWidth} >
+        <TextAreaRoot width={width} fullWidth={fullWidth} >
             <Label focus={focus} notEmpty={notEmpty} >{label}</Label>
             <Input
-                inputMode={inputMode} disabled={disabled}
+                rows={rows} disabled={disabled} 
                 onFocus={() => setFocus(true)} onBlur={()=>setFocus(false)}
                 name={name} value={value} onChange={(e) => {
-                    if (!e.target.value.match(ignoreReg)) {
-                        if (handleChange) {
-                            handleChange(e)
-                        }
-                        setNotEmpty(e.target.value !== '')
+                    if (handleChange) {
+                        handleChange(e)
                     }
+                    setNotEmpty(e.target.value !== '')
+                    const rowsCount = e.target.value.split('\n').length
+                    setRows(rowsCount > minRows ? rowsCount : minRows)
                 }}
             />
-        </TextFieldRoot>
+        </TextAreaRoot>
     )
 }
 
-export default TextField
+export default TextArea
 
-const TextFieldRoot = styled.div`
+const TextAreaRoot = styled.div`
     width: ${props => props.fullWidth || props.width > window.innerWidth
         ? '-webkit-fill-available'
         : props.width+'px'
@@ -41,9 +42,11 @@ const TextFieldRoot = styled.div`
     justify-content: center;
     margin: 10px;
 `
-const Input = styled.input`
+const Input = styled.textarea`
     outline: none; appearance: none;
+    resize: none;
     width: -webkit-fill-available;
+    height: ${({ rows }) => rows*27}px;
     position: static;
     padding: 15px;
     border: 1px solid #969696;
@@ -66,4 +69,5 @@ const Label = styled.label`
     color: ${props => props.focus ? 'royalblue' : '#717171'};
     font-size: ${props => props.focus || props.notEmpty ? 14 : 18 }px;
     transition: all 0.25s;
+    
 `

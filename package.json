@@ -11,6 +11,7 @@
     "heroku-postbuild": "cd web-client && yarn install && yarn build"
   },
   "dependencies": {
+    "@date-io/dayjs": "^2.10.6",
     "@types/react-router-dom": "^5.1.6",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
@@ -21,11 +22,10 @@
     "express": "^4.17.1",
     "firebase-admin": "^9.4.1",
     "morgan": "^1.10.0",
-    "path": "^0.12.7",
-    "react-toast-notifications": "^2.4.0"
+    "path": "^0.12.7"
   },
   "engines": {
-    "node": "14.10",
+    "node": "14.15",
     "yarn": "1.22"
   },
   "devDependencies": {

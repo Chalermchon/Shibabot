@@ -1,5 +1,7 @@
-import RegisterPage from './RegisterPage'
+import Register from './Register'
+import MyStore from './MyStore'
 
 export {
-    RegisterPage,
+    Register,
+    MyStore,
 }

@@ -3,7 +3,7 @@ import axios from 'axios'
 import { auth, groupCol, userCol } from '../firebase-admin'
 import { pushText, setRichmenuFor } from '../webhook/LINE/functions'
 
-const { LINE_CHANNEL_ID } = process.env
+const { CHANNEL_ID } = process.env
 
 const userAPI = Router()
 
@@ -17,7 +17,7 @@ userAPI.get('/:user_id', async (req, res) => {
             exists: user.exists,
         })
     } catch (err) {
-        return res.status(500).send('Internal Server Error')
+        return res.status(500).send('internal-server-error')
     }
 })
 
@@ -25,20 +25,21 @@ userAPI.post('/generate-auth-token', async (req, res) => {
     const { access_token, user_id } = req.body
     try {
         if ( typeof access_token === 'undefined') {
-            return res.status(404).send('AccessToken Not Found')
+            return res.status(404).send('access_token-not-found')
         }
         const { data: { client_id } } = await axios.get(`https://api.line.me/oauth2/v2.1/verify?access_token=${access_token}`)
-        if ( client_id !== LINE_CHANNEL_ID ) {
-            return res.status(401).send('Unauthorized')
+        if ( client_id !== CHANNEL_ID ) {
+            return res.status(401).send('unauthorized')
         }
         const user = await auth.getUser(user_id)
-        const token = await auth.createCustomToken(user.uid)
+        const { groupId } = (await userCol.doc(user_id).get()).data()
+        const token = await auth.createCustomToken(user.uid, {gid: groupId})
         return res.status(200).send(token)
     } catch (err) {
         if (err.code === 'auth/user-not-found')
-            return res.status(404).send('User Not Found')
+            return res.status(404).send('user-not-found')
         console.error(err)
-        return res.status(500).send('Internal Server Error')
+        return res.status(500).send('internal-server-error')
     }
 })
 
@@ -52,13 +53,14 @@ userAPI.post('/register', async (req, res) => {
                 auth.createUser({
                     uid: user_id
                 })
-                    .then(() => console.log('       > User_[N]:', user_id, '->', group_id))
+                    .then(() => {
+                        console.log('       > User:', user_id, '-JOIN->', group_id)
+                    })
                     .catch(err => {
-                        if (err.code === 'auth/uid-already-exists') {
-                            console.log('       > User_[U]:', user_id, '->', group_id)
-                        } else {
+                        if (err.code !== 'auth/uid-already-exists') {
                             throw err
                         }
+                        console.log('       > User:', user_id, '-MOVE->', group_id)
                     })
                 if (user.exists && !user.data().groupId) {
                     await userCol.doc(user_id).update({ 
@@ -68,7 +70,7 @@ userAPI.post('/register', async (req, res) => {
                     await setRichmenuFor(user_id)
                     await pushText(user_id, [
                         'มาเรื่มใช้งานกันเลยนะครับ',
-                        'คุณสามารถเข้าไป "เลือกซื้อสินค้า" หรือจะลงขายสินต้าได้ใน "ร้านค้าของฉัน" ในเมนูหลักได้เลยยย'
+                        'คคุณสามารถเข้าไป "เลือกซื้อสินค้า" หรือจะลงขายสินค้าได้ใน "ร้านค้าของฉัน" ในเมนูหลักได้เลยนะค้าบบ'
                     ])
                 } else {
                     await userCol.doc(user_id).set({ 
@@ -80,11 +82,11 @@ userAPI.post('/register', async (req, res) => {
             }
             return res.status(200).send()
         }
-        return res.status(404).send('Not found')
+        return res.status(404).send('not-found')
     }
     catch (err) {
         console.log(err)
-        return res.status(500).send('Internal Server Error')
+        return res.status(500).send('internal-server-error')
     }
 })
 

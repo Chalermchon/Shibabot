@@ -12,7 +12,7 @@ groupAPI.get('/:group_id', async (req, res) => {
             exists: group.exists
         })
     } catch (e) {
-        return res.status(500).send('Internal Server Error')
+        return res.status(500).send('internal-server-error')
     }
     
 })

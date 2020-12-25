@@ -11,7 +11,10 @@ firebase.initializeApp({
     measurementId: "G-DS1MH01ZP2"
 })
 
-const firestore = firebase.firestore()
 export const auth = firebase.auth()
+export const storage = firebase.storage().ref()
+const firestore = firebase.firestore()
+export const Timestamp = firebase.firestore.Timestamp
+export const FieldValue = firebase.firestore.FieldValue
 export const userCol = firestore.collection('Users')
 export const groupCol = firestore.collection('Groups')

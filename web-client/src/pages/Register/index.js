@@ -56,6 +56,8 @@ const Register = ({ location }) => {
                         dispatch({ type: 'SET_ERROR', payload: true })
                     }
                 })
+        } else {
+            dispatch({ type: 'SET_LOADER', payload: true })
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [groupId, userId])
@@ -77,11 +79,7 @@ const Register = ({ location }) => {
                 redirectToAddFriendOrLineChat()
             })
             .catch((err) => {
-                dispatch({ type: 'SET_ERROR', payload: {
-                    isDisplay: true,
-                    title: 'พบข้อผิดพลาดบางอย่าง',
-                    description: 'กรุณาลองใหม่ในภายหลัง'
-                }})
+                dispatch({ type: 'SET_ERROR', payload: true })
                 console.error(err)
             })
     }

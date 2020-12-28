@@ -35,6 +35,7 @@ export default Alert
 const Root = styled.div`
     width: -webkit-fill-available; height: -webkit-fill-available;
     position: fixed;
+    top: 0;
     z-index: 999;
     display: flex; 
     flex-direction: column;

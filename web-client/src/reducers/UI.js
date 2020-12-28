@@ -1,6 +1,6 @@
 const initialState = {
     loader: {
-        loading: true,
+        loading: false,
         animate: false,
     },
     alert: {
@@ -14,6 +14,7 @@ const initialState = {
         }
     },
     appBar: {
+        hidden: true,
         title: '',
         cartIcon: false,
         sortIcon: false,
@@ -88,6 +89,7 @@ const uiReducer = (state=initialState, { type, payload }) => {
             return {
                 ...state,
                 appBar: {
+                    hidden: payload.hidden,
                     title: payload.title,
                     cartIcon: payload.cartIcon,
                     sortIcon: payload.sortIcon,

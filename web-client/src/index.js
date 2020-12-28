@@ -1,12 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import thunk from 'redux-thunk'
 import { BrowserRouter } from 'react-router-dom'
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
 import { Provider as ReduxProvider } from 'react-redux'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import App from './App'
-import theme from './theme'
+import { THEME } from './GlobalValue'
 import rootReducer from './reducers'
 import reportWebVitals from './reportWebVitals'
 import { Alert, Loader } from './components'
@@ -17,13 +17,18 @@ const GlobalStyled = createGlobalStyle`
   }
 `
 
-const store = createStore(rootReducer, applyMiddleware(thunk))
+const store = createStore(rootReducer,
+  compose(
+    applyMiddleware(thunk),
+    window.devToolsExtension ? window.devToolsExtension() : f => f
+  )
+)
 
 ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={store} >
       <BrowserRouter>
-        <ThemeProvider theme={theme} >
+        <ThemeProvider theme={THEME} >
             <GlobalStyled />
             <Loader />
             <Alert />

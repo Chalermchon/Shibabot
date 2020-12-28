@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Switch } from 'react-router-dom'
-import { fetchLineInfo, onSignIn } from './actions'
-import { MyStore, Register } from './pages'
+import { InitLiffAndSignIn, onSignIn } from './actions'
+import { MyStore, QrCode, Register, SendProduct, Shopping } from './pages'
 
 const App = () => {
     const dispatch = useDispatch()
@@ -10,7 +10,7 @@ const App = () => {
 
     useEffect(() => {
         if (!isSignIn) {
-            dispatch(fetchLineInfo())
+            dispatch(InitLiffAndSignIn())
         } else {
             dispatch(onSignIn())
         }
@@ -20,7 +20,10 @@ const App = () => {
     return (
         <Switch>
             <Route path='/register' component={Register} />
-            <Route path='/my-store' component={MyStore} />
+            <Route path='/shopping' component={Shopping} />
+            <Route path='/my-store' component={MyStore}  />
+            <Route path='/send-product/:orderId' component={SendProduct} />
+            <Route path='/qr-code/:orderId'      component={QrCode} />
         </Switch>
     )
 }

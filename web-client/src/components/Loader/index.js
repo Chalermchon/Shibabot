@@ -40,7 +40,8 @@ const scale = keyframes`
 `
 const Root = styled.div`
     width: -webkit-fill-available; height: -webkit-fill-available;
-    position: fixed;
+    position: fixed; 
+    top: 0; left: 0;
     z-index: 999;
     display: flex; 
     flex-direction: column;

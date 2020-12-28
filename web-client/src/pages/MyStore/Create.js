@@ -1,11 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import Compress from 'compress.js'
 import styled from 'styled-components'
 import { DatePicker, Dropdown, TextArea, TextField, UploadImages } from '../../components'
 import { groupCol, FieldValue, userCol, storage, Timestamp } from '../../firebase-web'
+import { CATEGORIES } from '../../GlobalValue'
+import dayjs from 'dayjs'
 
 const Create = () => {
+    const compress = new Compress()
     const dispatch = useDispatch()
     const history = useHistory()
     const { alert } = useSelector(state => state.ui)
@@ -26,10 +30,10 @@ const Create = () => {
         product.images.map(image => URL.createObjectURL(image))
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ), [product.images.length])
-    
 
     useEffect(() => {
         dispatch({ type: 'SET_APPBAR', payload: {
+            hidden: false,
             title: 'ลงขายสินค้าใหม่',
             cartIcon: false,
             sortIcon: false,
@@ -49,6 +53,46 @@ const Create = () => {
         )
     }, [product])
 
+    const resizeFile = (files) => {
+        return compress.compress(files, {
+            quality: 1, 
+            maxWidth: 300,
+            maxHeight: 300,
+        })
+    }
+
+    const uploadEachFile = async (file) => {
+        const filename = dayjs().format('DD-MM-YY_HH-mm-ss-SSSZZ')
+        const format = file.type.split('/').pop()
+        return new Promise((resolve, reject) => {
+            const task = storage.child(`${groupId}/${filename}.${format}`).put(file)
+            task.on('state_changed',
+                (snapshot) => {
+                    let percentage = snapshot.bytesTransferred / snapshot.totalBytes * 100
+                    console.log(filename, percentage)
+                },
+                (err) => {
+                    console.log(`Upload error(${file})`,err)
+                    reject(err)
+                },
+                () => {
+                    task.snapshot.ref.getDownloadURL()
+                        .then(downloadURL => resolve(downloadURL))
+                        .catch((err) => reject(err))
+                }
+            )
+        })
+    }
+    const uploadAllFiles = async () => {
+        const images = await resizeFile(product.images)
+        const files = images.map(image => Compress.convertBase64ToFile(image.data, image.ext))
+        return Promise.all(
+            files.map(async (file) => {
+                return await uploadEachFile(file)
+            })
+        )
+    }
+    
     const handleChange = ({ target: { name, value, files } }) => {
         setProduct({
             ...product,
@@ -61,50 +105,21 @@ const Create = () => {
             images: [...product.images.slice(0, index), ...product.images.slice(index+1) ]
         })
     }
-    const uploadEachImage = async (imageFile) => {
-        return new Promise((resolve, reject) => {
-            const imageExt = imageFile.type.split('/').pop()
-            const now = new Date()
-            let filename = `${now.toISOString()}`
-            const task = storage.child(`${groupId}/${filename}.${imageExt}`).put(imageFile)
-            task.on('state_changed',
-                (snapshot) => {
-                    let percentage = snapshot.bytesTransferred / snapshot.totalBytes * 100
-                    console.log(imageFile.name, percentage)
-                },
-                (err) => {
-                    console.log(`Upload error(${imageFile})`,err)
-                    reject(err)
-                },
-                () => {
-                    task.snapshot.ref.getDownloadURL()
-                        .then(downloadURL => resolve(downloadURL))
-                        .catch((err) => reject(err))
-                }
-            )
-        })
-    }
-    const uploadAllImages = async () => {
-        return Promise.all(
-            product.images.map(async (image) => {
-                return await uploadEachImage(image)
-            })
-        )
-    }
     const handleSubmit = (e) => {
         e.preventDefault()
-        uploadAllImages()
+        dispatch({ type: 'SET_LOADER', payload: {loading: true, animate: true} })
+        uploadAllFiles()
             .then(imageUrls => {
                 return groupCol.doc(groupId).collection(`Products_${product.category}`).add({
                     category:   product.category,
                     name:       product.name,
                     images:     imageUrls,
                     cost:       parseInt(product.cost),
-                    detail:     product.detail,
+                    detail:     product.detail.replace(/\n/g, "\\n"),
                     type:       product.type,
                     until:      product.type === 'pre-order' ? new Date(product.until) : null,
                     total:      product.type === 'in-stock'  ? parseInt(product.total) : null,
-                    amount:     product.type === 'in-stock'  ? parseInt(product.total) : 0,
+                    amount:     0,
                     userId:     userId,
                     isActive:   true,
                     createdAt:  Timestamp.now()
@@ -112,7 +127,9 @@ const Create = () => {
             })
             .then((doc) => {
                 return userCol.doc(userId).update({
-                    products: FieldValue.arrayUnion(doc.id)
+                    products: FieldValue.arrayUnion({
+                        productId: doc.id, category: product.category
+                    })
                 })
             })
             .then(() => {
@@ -184,12 +201,9 @@ const Create = () => {
                 name='category'
                 value={product.category}
                 handleChange={handleChange}
-                options={[
-                    {value: 'foods-n-drinks', text: 'อาหาร และ เครื่องดื่ม'},
-                    {value: 'costumes', text: 'เครื่องแต่งกาย'},
-                    {value: 'tools', text: 'ข้าวของ'},
-                    {value: 'books', text: 'หนังสือ'},
-                ]}
+                options={Object.keys(CATEGORIES).map(category => ({
+                    value: category, text: CATEGORIES[category]
+                }))}
             /> 
             <TextField
                 label='ราคา'
@@ -229,12 +243,12 @@ const Button = styled.button`
     font-size: 16px;
     color: ${({ disabled }) => disabled ? '#969696' : 'white'};
     background-color: ${({ theme, disabled }) => disabled ? 'transparent' : theme.colors.primary};
-    box-shadow: ${({ disabled }) => disabled ? 'none' : '0 2px 3px #003DAFAB'}; 
+    box-shadow: ${({ theme, disabled }) => disabled ? 'none' : '0 2px 3px '+theme.shadows.primary}; 
     transition: all .25s ease-in-out;
     :focus {
         color: ${({ theme }) => theme.colors.primary};
         background-color: white;
         border: 1px solid ${({ theme }) => theme.colors.primary};
-        box-shadow: 0 0 3px #003DAFAB;
+        box-shadow: 0 0 3px ${({ theme }) => theme.shadows.primary};
     }
 `

@@ -4,10 +4,11 @@ import { Route, Switch } from 'react-router-dom'
 import { redirectToAddFriendOrLineChat } from '../../actions'
 import { AppBar } from '../../components'
 import Home from './Home'
-import Create from './Create'
+import Cart from './Cart'
+import Products from './Products'
 import Product from './Product'
 
-const MyStore = ({ match }) => {
+const Shopping = ({ match }) => {
     const dispatch = useDispatch()
     const { isSignIn, isFriend, notRegister } = useSelector(state => state.user)
 
@@ -27,12 +28,13 @@ const MyStore = ({ match }) => {
         <>
             <AppBar />
             <Switch>
-                <Route exact path={`${match.path}/`} component={Home} />
-                <Route path={`${match.path}/create`} component={Create} />
-                <Route path={`${match.path}/product/:category/:productId`} component={Product} />
+                <Route exact path={`${match.path}/`}               component={Home}     />
+                <Route path={`${match.path}/cart`}                 component={Cart}     />
+                <Route exact path={`${match.path}/:category`}      component={Products} />
+                <Route path={`${match.path}/:category/:productId`} component={Product}  />
             </Switch>
         </>
     ) : null
 }
 
-export default MyStore
+export default Shopping

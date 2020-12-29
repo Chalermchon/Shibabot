@@ -18,10 +18,9 @@ const SendProduct = ({ match }) => {
     useEffect(() => {
         if ( notRegister || (isFriend !== undefined && !isFriend) ) {
             redirectToAddFriendOrLineChat()
-        } else {
+        } else if (isFriend !== undefined && isFriend) {
             axios.post('/api/order/send', {order_id: orderId, group_id: groupId, user_id: userId})
                 .then(({data}) => {
-                    alert(JSON.stringify(data))
                     dispatch({ type: 'SET_ALERT', payload: {
                         isDisplay: true,
                         type: 'success',

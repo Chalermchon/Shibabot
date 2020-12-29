@@ -48,16 +48,17 @@ orderAPI.post('/send', async (req, res) => {
             console.log('in-stock: ', product.type === 'in-stock' && product.amount === product.total)
             console.log('pre-order: ', product.type === 'pre-order' && dayjs().isSameOrAfter(product.until))
             console.log('total-order: ', product.orders.length === 0)
+            console.log('not total-order: ', product.orders.length !== 0)
             if (
                 ((product.type === 'in-stock' && product.amount === product.total) ||
                 ( product.type === 'pre-order' && dayjs().isSameOrAfter(product.until)))
-                && product.orders.length === 0
+                && product.orders.length === 0 || [].length
             ) {
                 await groupCol.doc(group_id).collection(`Products_${order.category}`).doc(order.productId).update({
                     isActive: false
                 }) 
             }
-            return res.status(200).send({category: product.category, product_id: product.productId})
+            return res.status(200).send({category: order.category, product_id: order.productId})
         }
         return res.status(403).send('forbidden')
     }

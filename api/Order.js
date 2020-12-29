@@ -54,7 +54,7 @@ orderAPI.post('/send', async (req, res) => {
                     isActive: false
                 }) 
             }
-            return res.status(200).send()
+            return res.status(200).send({category: product.category, product_id: product.productId})
         }
         return res.status(403).send('forbidden')
     }

@@ -20,7 +20,7 @@ const SendProduct = ({ match }) => {
             redirectToAddFriendOrLineChat()
         } else {
             axios.post('/api/order/send', {order_id: orderId, group_id: groupId, user_id: userId})
-                .then(() => {
+                .then(({data}) => {
                     dispatch({ type: 'SET_ALERT', payload: {
                         isDisplay: true,
                         type: 'success',
@@ -30,7 +30,7 @@ const SendProduct = ({ match }) => {
                             display: true,
                             onClick: (e) => {
                                 dispatch({ type: 'SET_ALERT', payload: {isDisplay: false} })
-                                history.goBack()
+                                history.replace(`/my-store/product/${data.category}/${data.product_id}`)
                             }
                         }
                     } })

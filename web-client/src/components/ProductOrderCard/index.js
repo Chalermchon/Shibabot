@@ -7,13 +7,11 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/th'
-import { useHistory } from 'react-router-dom'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(relativeTime)
 
 const ProductOrderCard = ({ user: {name, image, localLocation}, amount, totalCost, createdAt }) => {
-    const history = useHistory()
 
     return (
         <Root>
@@ -35,7 +33,7 @@ const ProductOrderCard = ({ user: {name, image, localLocation}, amount, totalCos
                 }
             </CreatedAt>
             <Cost>ยอดสุทธิ {totalCost} บาท</Cost>
-            <Button onClick={() => history.push('https://line.me/R/nv/QRCodeReader')}> 
+            <Button onClick={() => window.location = 'https://line.me/R/nv/QRCodeReader'}> 
                 <BiScan size={18} style={{margin: '0 10px 0 0'}} />
                 ส่งมอบสินค้า 
             </Button>

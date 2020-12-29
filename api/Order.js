@@ -45,6 +45,9 @@ orderAPI.post('/send', async (req, res) => {
             await userCol.doc(order.userId).update({
                 orders: FieldValue.arrayRemove(order_id)
             })
+            console.log('in-stock: ', product.type === 'in-stock' && product.amount === product.total)
+            console.log('pre-order: ', product.type === 'pre-order' && dayjs().isSameOrAfter(product.until)))
+            console.log('total-order: ', product.orders.length === 0)
             if (
                 ((product.type === 'in-stock' && product.amount === product.total) ||
                 ( product.type === 'pre-order' && dayjs().isSameOrAfter(product.until)))

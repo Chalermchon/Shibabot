@@ -21,6 +21,7 @@ const SendProduct = ({ match }) => {
         } else {
             axios.post('/api/order/send', {order_id: orderId, group_id: groupId, user_id: userId})
                 .then(({data}) => {
+                    console.log(data)
                     dispatch({ type: 'SET_ALERT', payload: {
                         isDisplay: true,
                         type: 'success',

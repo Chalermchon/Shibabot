@@ -52,7 +52,7 @@ orderAPI.post('/send', async (req, res) => {
             if (
                 ((product.type === 'in-stock' && product.amount === product.total) ||
                 ( product.type === 'pre-order' && dayjs().isSameOrAfter(product.until)))
-                && product.orders.length === 0 || [].length
+                && product.orders.length === 0
             ) {
                 await groupCol.doc(group_id).collection(`Products_${order.category}`).doc(order.productId).update({
                     isActive: false

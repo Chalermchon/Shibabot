@@ -3,7 +3,7 @@ import { pushText } from '../webhook/LINE/functions'
 import { FieldValue, groupCol, userCol } from '../firebase-admin'
 
 import dayjs from 'dayjs'
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import isSameOrAfter from 'dayjs/plugin/isSameOrBefore'
 dayjs.extend(isSameOrAfter)
 
 const orderAPI = Router()
@@ -47,7 +47,7 @@ orderAPI.post('/send', async (req, res) => {
             })
             if (
                 ((product.type === 'in-stock' && product.amount === product.total) ||
-                ( product.type === 'pre-order' && dayjs().isSameOrAfter(product.until)))
+                ( product.type === 'pre-order' && dayjs().isSameOrAfter(product.until.toDate())))
                 && product.orders.length === 1
             ) {
                 await groupCol.doc(group_id).collection(`Products_${order.category}`).doc(order.productId).update({

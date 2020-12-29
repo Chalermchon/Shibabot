@@ -75,6 +75,7 @@ lineWebhook.post('/', async (req, res) => {
                             })
                         }
                     }
+                    await replyFlexWhenJoinGroup(groupId, replyToken)
                     return res.status(200).send()
                 case 'memberLeft':
                     if (groupId) {

@@ -39,7 +39,7 @@ orderAPI.post('/send', async (req, res) => {
         const order = orderDoc.data()
         const product = (await groupCol.doc(group_id).collection(`Products_${order.category}`).doc(order.productId).get()).data()
         if (product.userId === user_id) {
-            await groupCol.doc(groupId).collection(`Products_${order.category}`).doc(order.productId).update({
+            await groupCol.doc(group_id).collection(`Products_${order.category}`).doc(order.productId).update({
                 orders: FieldValue.arrayRemove(order_id)
             })
             await userCol.doc(order.userId).update({
@@ -50,7 +50,7 @@ orderAPI.post('/send', async (req, res) => {
                 ( product.type === 'pre-order' && dayjs().isSameOrAfter(product.until)))
                 && product.orders.length === 0
             ) {
-                await groupCol.doc(groupId).collection(`Products_${order.category}`).doc(order.productId).update({
+                await groupCol.doc(group_id).collection(`Products_${order.category}`).doc(order.productId).update({
                     isActive: false
                 }) 
             }

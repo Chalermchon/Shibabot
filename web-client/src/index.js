@@ -27,14 +27,14 @@ const store = createStore(rootReducer,
 ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={store} >
-      <BrowserRouter>
-        <ThemeProvider theme={THEME} >
+      <ThemeProvider theme={THEME} >
+        <BrowserRouter>
             <GlobalStyled />
             <Loader />
             <Alert />
             <App />
-        </ThemeProvider>
-      </BrowserRouter>
+        </BrowserRouter>
+      </ThemeProvider>
     </ReduxProvider>
   </React.StrictMode>,
   document.getElementById('root')

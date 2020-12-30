@@ -74,6 +74,7 @@ const Background = styled.div`
     top: ${props => props.visible ? '-70px' : '0px'};
     transition: top 300ms ease;
     height: 60px; width: 100%;
+    font-family: 'Kanit';
     color: #444444;
     background-color: white;
     border-radius: 0px 0px 20px 20px;

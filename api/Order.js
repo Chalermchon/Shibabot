@@ -3,7 +3,7 @@ import { pushText } from '../webhook/LINE/functions'
 import { FieldValue, groupCol, userCol } from '../firebase-admin'
 
 import dayjs from 'dayjs'
-import isSameOrAfter from 'dayjs/plugin/isSameOrBefore'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 dayjs.extend(isSameOrAfter)
 
 const orderAPI = Router()
